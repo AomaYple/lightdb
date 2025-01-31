@@ -17,7 +17,7 @@ file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
 )
 if (NOT CMAKE_BUILD_TYPE STREQUAL "Release")
     list(REMOVE_ITEM SOURCES
-            ${CMAKE_CURRENT_SOURCE_DIR}/src/memory/MiMallocResource.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/src/memoryResource/MiMallocResource.cpp
     )
 endif ()
 target_sources(${PROJECT_NAME}

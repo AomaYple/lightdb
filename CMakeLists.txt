@@ -41,7 +41,7 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
             PRIVATE
             -Weverything
             -stdlib=libc++
-            $<$<CONFIG:Debug>:-g3 -glldb3 -Og -fsanitize=address -fsanitize=leak -fsanitize=undefined>
+            $<$<CONFIG:Debug>:-g3 -glldb -Og -fsanitize=address -fsanitize=leak -fsanitize=undefined>
             $<$<CONFIG:Release>:-O3 -ffast-math>
     )
     target_link_options(${PROJECT_NAME}

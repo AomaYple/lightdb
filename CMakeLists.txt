@@ -15,6 +15,11 @@ set_target_properties(${PROJECT_NAME}
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
         src/*.cpp
 )
+if (NOT CMAKE_BUILD_TYPE STREQUAL "Release")
+    list(REMOVE_ITEM SOURCES
+            ${CMAKE_CURRENT_SOURCE_DIR}/src/memory/MiMallocResource.cpp
+    )
+endif ()
 target_sources(${PROJECT_NAME}
         PRIVATE
         ${SOURCES}
@@ -70,6 +75,12 @@ if (CMAKE_BUILD_TYPE STREQUAL "Release" AND NATIVE)
             $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:-march=native>
     )
 endif ()
+
+find_package(mimalloc REQUIRED)
+target_link_libraries(${PROJECT_NAME}
+        PRIVATE
+        $<$<CONFIG:Release>:mimalloc>
+)
 
 set(installTargets ${PROJECT_NAME}Targets)
 install(TARGETS ${PROJECT_NAME}

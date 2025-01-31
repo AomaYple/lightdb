@@ -8,6 +8,7 @@ set_target_properties(${PROJECT_NAME}
         PROPERTIES
         CXX_STANDARD ${CMAKE_CXX_STANDARD_LATEST}
         CXX_STANDARD_REQUIRED ON
+        COMPILE_WARNING_AS_ERROR ON
         INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE
 )
 
@@ -39,9 +40,9 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     target_compile_options(${PROJECT_NAME}
             PRIVATE
-            -Weverything
+            -Wall -Wextra -Wpedantic
             -stdlib=libc++
-            $<$<CONFIG:Debug>:-g3 -glldb -Og -fsanitize=address -fsanitize=leak -fsanitize=undefined>
+            $<$<CONFIG:Debug>:-g3 -ggdb3 -glldb -Og -fsanitize=address -fsanitize=leak -fsanitize=undefined>
             $<$<CONFIG:Release>:-O3 -ffast-math>
     )
     target_link_options(${PROJECT_NAME}

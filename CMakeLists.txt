@@ -52,7 +52,7 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     target_compile_options(${PROJECT_NAME}
             PRIVATE
-            /utf-8 /Wall /MP /permissive-
+            /utf-8 /W4 /MP /permissive-
             $<$<CONFIG:Debug>:/sdl /fsanitize=address>
             $<$<CONFIG:Release>:/Ob3 /GT /Gy /fp:fast>
     )

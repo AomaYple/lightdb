@@ -2,7 +2,7 @@
 
 #include <memory_resource>
 
-namespace coContext::internal {
+namespace lightdb::internal {
     class MiMallocResource final : public std::pmr::memory_resource {
     public:
         constexpr MiMallocResource() noexcept = default;
@@ -23,4 +23,4 @@ namespace coContext::internal {
 
         [[nodiscard]] auto do_is_equal(const memory_resource &other) const noexcept -> bool override;
     };
-}    // namespace coContext::internal
+}    // namespace lightdb::internal

@@ -4,7 +4,7 @@
     #include "MiMallocResource.hpp"
 #endif    // NDEBUG
 
-auto coContext::internal::getMemoryResource() -> std::pmr::memory_resource * {
+auto lightdb ::internal::getMemoryResource() -> std::pmr::memory_resource * {
 #ifndef NDEBUG
     thread_local std::pmr::unsynchronized_pool_resource resource;
 #else     // NDEBUG

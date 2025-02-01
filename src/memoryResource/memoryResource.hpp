@@ -2,6 +2,6 @@
 
 #include <memory_resource>
 
-namespace coContext::internal {
+namespace lightdb::internal {
     [[nodiscard]] auto getMemoryResource() -> std::pmr::memory_resource *;
-}    // namespace coContext::internal
+}    // namespace lightdb::internal

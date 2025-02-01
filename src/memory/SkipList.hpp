@@ -3,6 +3,7 @@
 #include "../memoryResource/memoryResource.hpp"
 
 #include <memory>
+#include <vector>
 
 namespace lightdb::internal {
     class SkipList {
@@ -12,20 +13,29 @@ namespace lightdb::internal {
 
             auto operator delete(void *pointer, std::size_t bytes) noexcept -> void;
 
-            std::shared_ptr<std::pmr::vector<std::byte>> data{
-                std::allocate_shared<std::pmr::vector<std::byte>>(std::pmr::polymorphic_allocator{getMemoryResource()},
-                                                                  std::pmr::vector<std::byte>{getMemoryResource()})};
+            std::shared_ptr<std::pmr::vector<std::byte>> data;
             Node *next{}, *down{};
         };
+
+        constexpr SkipList() = default;
+
+        ~SkipList();
 
     private:
         static constexpr std::uint8_t maxHeight{12};
 
-        std::array<Node, maxHeight> levels{[] constexpr {
-            std::array<Node, maxHeight> levels{};
-            for (std::uint8_t i{std::size(levels) - 1}; i != 0; --i) levels[i].down = std::addressof(levels[i - 1]);
+        Node *head{[] constexpr {
+            auto *const head{new Node{
+                std::allocate_shared<std::pmr::vector<std::byte>>(std::pmr::polymorphic_allocator{getMemoryResource()},
+                                                                  std::pmr::vector<std::byte>{getMemoryResource()})}},
+                *previous{head};
+            for (std::uint8_t i{}; i != maxHeight - 1; ++i) {
+                auto *node{new Node{previous->data}};
+                previous->down = node;
+                previous = node;
+            }
 
-            return levels;
+            return head;
         }()};
     };
 

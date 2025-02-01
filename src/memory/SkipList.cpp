@@ -8,6 +8,21 @@ auto lightdb::internal::SkipList::Node::operator delete(void *const pointer, con
     getMemoryResource()->deallocate(pointer, bytes);
 }
 
+lightdb::internal::SkipList::~SkipList() {
+    while (this->head != nullptr) {
+        Node *const down{this->head->down};
+
+        const Node *level{this->head};
+        while (level != nullptr) {
+            const Node *const next{level->next};
+            delete level;
+            level = next;
+        }
+
+        this->head = down;
+    }
+}
+
 auto lightdb::internal::operator==(const SkipList::Node &lhs, const SkipList::Node &rhs) -> bool {
     return *lhs.data == *rhs.data;
 }

@@ -20,6 +20,7 @@ if (NOT CMAKE_BUILD_TYPE STREQUAL "Release")
             ${CMAKE_CURRENT_SOURCE_DIR}/src/memoryResource/MiMallocResource.cpp
     )
 endif ()
+
 target_sources(${PROJECT_NAME}
         PRIVATE
         ${SOURCES}
@@ -31,12 +32,14 @@ target_include_directories(${PROJECT_NAME}
         $<INSTALL_INTERFACE:include>
 )
 
+option(NATIVE "Enable native optimization")
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     target_compile_options(${PROJECT_NAME}
             PRIVATE
             -Wall -Wextra -Wpedantic
             $<$<CONFIG:Debug>:-g3 -ggdb3 -Og -fsanitize=address -fsanitize=leak -fsanitize=undefined>
             $<$<CONFIG:Release>:-Ofast>
+            $<$<AND:$<CONFIG:Release>,$<BOOL:${NATIVE}>>:-march=native>
     )
     target_link_options(${PROJECT_NAME}
             PRIVATE
@@ -49,6 +52,7 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
             -Wall -Wextra -Wpedantic
             $<$<CONFIG:Debug>:-g3 -ggdb3 -glldb -Og -fsanitize=address -fsanitize=leak -fsanitize=undefined>
             $<$<CONFIG:Release>:-O3 -ffast-math>
+            $<$<AND:$<CONFIG:Release>,$<BOOL:${NATIVE}>>:-march=native>
     )
     target_link_options(${PROJECT_NAME}
             PRIVATE
@@ -68,21 +72,10 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     )
 endif ()
 
-option(NATIVE "Enable native optimization")
-if (CMAKE_BUILD_TYPE STREQUAL "Release")
-    find_package(mimalloc REQUIRED)
-    target_link_libraries(${PROJECT_NAME}
-            PRIVATE
-            $<$<CONFIG:Release>:mimalloc>
-    )
-
-    if (NATIVE)
-        target_compile_options(${PROJECT_NAME}
-                PRIVATE
-                $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:-march=native>
-        )
-    endif ()
-endif ()
+target_link_libraries(${PROJECT_NAME}
+        PRIVATE
+        $<$<CONFIG:Release>:mimalloc>
+)
 
 set(installTargets ${PROJECT_NAME}Targets)
 install(TARGETS ${PROJECT_NAME}

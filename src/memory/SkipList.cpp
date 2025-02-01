@@ -1,7 +1,5 @@
 #include "SkipList.hpp"
 
-#include "../memoryResource/memoryResource.hpp"
-
 auto lightdb::internal::SkipList::Node::operator new(const std::size_t bytes) -> void * {
     return getMemoryResource()->allocate(bytes);
 }

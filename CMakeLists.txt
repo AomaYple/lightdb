@@ -45,8 +45,8 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     target_compile_options(${PROJECT_NAME}
             PRIVATE
-            -Wall -Wextra -Wpedantic
             -stdlib=libc++
+            -Wall -Wextra -Wpedantic
             $<$<CONFIG:Debug>:-g3 -ggdb3 -glldb -Og -fsanitize=address -fsanitize=leak -fsanitize=undefined>
             $<$<CONFIG:Release>:-O3 -ffast-math>
     )
@@ -57,7 +57,7 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     target_compile_options(${PROJECT_NAME}
             PRIVATE
-            /utf-8 /W4 /MP /permissive-
+            /permissive- /utf-8 /W4 /MP
             $<$<CONFIG:Debug>:/sdl /fsanitize=address>
             $<$<CONFIG:Release>:/Ob3 /GT /Gy /fp:fast>
     )
@@ -69,18 +69,20 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 endif ()
 
 option(NATIVE "Enable native optimization")
-if (CMAKE_BUILD_TYPE STREQUAL "Release" AND NATIVE)
-    target_compile_options(${PROJECT_NAME}
+if (CMAKE_BUILD_TYPE STREQUAL "Release")
+    find_package(mimalloc REQUIRED)
+    target_link_libraries(${PROJECT_NAME}
             PRIVATE
-            $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:-march=native>
+            $<$<CONFIG:Release>:mimalloc>
     )
-endif ()
 
-find_package(mimalloc REQUIRED)
-target_link_libraries(${PROJECT_NAME}
-        PRIVATE
-        $<$<CONFIG:Release>:mimalloc>
-)
+    if (NATIVE)
+        target_compile_options(${PROJECT_NAME}
+                PRIVATE
+                $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:-march=native>
+        )
+    endif ()
+endif ()
 
 set(installTargets ${PROJECT_NAME}Targets)
 install(TARGETS ${PROJECT_NAME}

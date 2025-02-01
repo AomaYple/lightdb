@@ -24,6 +24,8 @@ namespace lightdb::internal {
     private:
         static constexpr std::uint8_t maxHeight{12};
 
+        [[nodiscard]] static auto randomHeight() -> std::uint8_t;
+
         Node *head{[] constexpr {
             auto *const head{new Node{
                 std::allocate_shared<std::pmr::vector<std::byte>>(std::pmr::polymorphic_allocator{getMemoryResource()},

@@ -1,5 +1,7 @@
 #include "SkipList.hpp"
 
+#include <random>
+
 auto lightdb::internal::SkipList::Node::operator new(const std::size_t bytes) -> void * {
     return getMemoryResource()->allocate(bytes);
 }
@@ -21,6 +23,16 @@ lightdb::internal::SkipList::~SkipList() {
 
         this->head = down;
     }
+}
+
+auto lightdb::internal::SkipList::randomHeight() -> std::uint8_t {
+    static std::mt19937 generator{std::random_device{}()};
+    static std::uniform_int_distribution distribution{0, 3};
+
+    std::uint8_t height{};
+    while (distribution(generator) == 0 && height != maxHeight) ++height;
+
+    return height;
 }
 
 auto lightdb::internal::operator==(const SkipList::Node &lhs, const SkipList::Node &rhs) -> bool {

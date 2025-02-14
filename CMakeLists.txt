@@ -1,11 +1,13 @@
 cmake_minimum_required(VERSION 3.30)
 
-project(lightdb)
+project(lightdb VERSION 1.0.0)
 
 add_library(${PROJECT_NAME} SHARED)
 
 set_target_properties(${PROJECT_NAME}
         PROPERTIES
+        VERSION ${PROJECT_VERSION}
+        SOVERSION ${PROJECT_VERSION_MAJOR}
         CXX_STANDARD ${CMAKE_CXX_STANDARD_LATEST}
         CXX_STANDARD_REQUIRED ON
         COMPILE_WARNING_AS_ERROR ON
@@ -15,7 +17,10 @@ set_target_properties(${PROJECT_NAME}
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
         src/*.cpp
 )
-if (NOT CMAKE_BUILD_TYPE STREQUAL "Release")
+
+if (CMAKE_BUILD_TYPE STREQUAL "Release")
+    find_package(mimalloc REQUIRED)
+else ()
     list(REMOVE_ITEM SOURCES
             ${CMAKE_CURRENT_SOURCE_DIR}/src/memoryResource/MiMallocResource.cpp
     )
@@ -77,16 +82,39 @@ target_link_libraries(${PROJECT_NAME}
         $<$<CONFIG:Release>:mimalloc>
 )
 
-set(installTargets ${PROJECT_NAME}Targets)
-install(TARGETS ${PROJECT_NAME}
-        EXPORT ${installTargets}
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+
+configure_package_config_file(cmake/${PROJECT_NAME}Config.cmake.in ${PROJECT_NAME}Config.cmake
+        INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROcJECT_NAME}
 )
 
-install(EXPORT ${installTargets}
-        FILE ${PROJECT_NAME}Config.cmake
-        DESTINATION lib/cmake/${PROJECT_NAME}
+write_basic_package_version_file(${PROJECT_NAME}ConfigVersion.cmake
+        COMPATIBILITY SameMinorVersion
+)
+
+install(FILES
+        ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
+        ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake
+
+        DESTINATION
+        ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
 )
 
 install(DIRECTORY include/
-        DESTINATION include
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
+
+install(FILES LICENSE
+        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/licenses/${PROJECT_NAME}
+)
+
+install(TARGETS ${PROJECT_NAME}
+        EXPORT ${PROJECT_NAME}Targets
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)
+
+install(EXPORT ${PROJECT_NAME}Targets
+        FILE ${PROJECT_NAME}Targets.cmake
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
 )

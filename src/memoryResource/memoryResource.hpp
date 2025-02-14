@@ -3,5 +3,7 @@
 #include <memory_resource>
 
 namespace lightdb::internal {
-    [[nodiscard]] auto getMemoryResource() -> std::pmr::memory_resource *;
+    [[nodiscard]] auto getSyncMemoryResource() -> std::pmr::memory_resource *;
+
+    [[nodiscard]] auto getUnsyncMemoryResource() -> std::pmr::memory_resource *;
 }    // namespace lightdb::internal

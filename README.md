@@ -7,9 +7,9 @@
 - 编译
     - [CMake](https://cmake.org) >= 3.30
     - [Ninja](https://ninja-build.org) >= 1.8.2
-    - [mimalloc](https://github.com/microsoft/mimalloc)
+    - [mimalloc](https://github.com/microsoft/mimalloc) >= 1.0.0
 - 运行
-    - [mimalloc](https://github.com/microsoft/mimalloc)
+    - [mimalloc](https://github.com/microsoft/mimalloc) >= 1.0.0
 
 ## 构建
 

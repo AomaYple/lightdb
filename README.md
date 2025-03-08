@@ -21,7 +21,7 @@ ninja
 
 额外CMake选项
 
-- `-DNATIVE=ON` 启用本机指令集（构建类型为`Release`和编译器为`GCC`或`Clang`下生效）
+- `-DNATIVE=ON` 启用本机指令集（构建类型为`Release`和编译器为`GCC`或`Clang`时生效）
 
 ## 安装
 
